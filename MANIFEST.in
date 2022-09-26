@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include anel *.css
+recursive-include anel *.csv
+recursive-include anel *.html
+recursive-include anel *.ico
+recursive-include anel *.js
+recursive-include anel *.json
+recursive-include anel *.md
+recursive-include anel *.png
+recursive-include anel *.py
+recursive-include anel *.svg
+recursive-include anel *.txt
+recursive-exclude anel *.pyc
