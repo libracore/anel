@@ -16,9 +16,6 @@ def get_columns():
         {"label": _("Customer name"), "fieldname": "customer_name", "fieldtype": "Data", "width": 100},
         {"label": _("Parent Territory"), "fieldname": "parent_territory", "fieldtype": "Link", "options": "Territory", "width": 100},
         {"label": _("Territory"), "fieldname": "territory", "fieldtype": "Link", "options": "Territory", "width": 100},
-        {"label": _("Item"), "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
-        {"label": _("Item name"), "fieldname": "item_name", "fieldtype": "Data", "width": 150},
-        {"label": _("Key"), "fieldname": "key", "fieldtype": "Data", "width": 100},
         {"label": _("UOM"), "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 50},
         {"label": _("Menge P1"), "fieldname": "qty_p1", "fieldtype": "Float", "width": 100},
         {"label": _("Menge P2"), "fieldname": "qty_p2", "fieldtype": "Float", "width": 100},
@@ -47,9 +44,6 @@ def get_data(filters):
         `tabCustomer`.`customer_name` AS `customer_name`,
         `tabCustomer`.`parent_territory` AS `parent_territory`,
         `tabCustomer`.`territory` AS `territory`,
-        `items`.`item_code` AS `item_code`,
-        `tabItem`.`item_name` AS `item_name`,
-        `items`.`key` AS `key`,
         `data_P2`.`stock_uom` AS `uom`,
         `data_P1`.`qty` AS `qty_p1`,
         `data_P2`.`qty` AS `qty_p2`,
@@ -67,21 +61,18 @@ def get_data(filters):
     FROM 
     (
         SELECT 
-            `tabSales Order`.`customer`,
-            `tabSales Order Item`.`item_code`,
-            CONCAT(`tabSales Order`.`customer`, "::", `tabSales Order Item`.`item_code`) AS `key`
+            `tabSales Order`.`customer`
         FROM `tabSales Order Item`
         LEFT JOIN `tabSales Order` ON `tabSales Order`.`name` = `tabSales Order Item`.`parent`
         WHERE 
             `tabSales Order`.`docstatus` = 1
             AND `tabSales Order`.`transaction_date` >= DATE_SUB(NOW(), INTERVAL 180 DAY)
-        GROUP BY `key`
+        GROUP BY `tabSales Order`.`customer`
     ) AS `items`
     LEFT JOIN `tabCustomer` ON `tabCustomer`.`name` = `items`.`customer`
-    LEFT JOIN `tabItem` ON `tabItem`.`item_code` = `items`.`item_code`
     LEFT JOIN 
         (SELECT 
-            CONCAT(`tP1`.`customer`, "::", `tiP1`.`item_code`) AS `key`,
+            `tP1`.`customer` AS `customer`,
             SUM(`tiP1`.`stock_qty`) AS `qty`,
             AVG(`tiP1`.`rate`) AS `rate`,
             MAX(`tP1`.`transaction_date`) AS `last_order`,
@@ -94,11 +85,11 @@ def get_data(filters):
             `tP1`.`docstatus` = 1
             AND `tP1`.`transaction_date` >= "{p1_from}"
             AND `tP1`.`transaction_date` <= "{p1_to}"
-         GROUP BY `key`
-        ) AS `data_P1` ON `data_P1`.`key` = `items`.`key`
+         GROUP BY `tP1`.`customer`
+        ) AS `data_P1` ON `data_P1`.`customer` = `items`.`customer`
     LEFT JOIN 
         (SELECT 
-            CONCAT(`tP2`.`customer`, "::", `tiP2`.`item_code`) AS `key`,
+            `tP2`.`customer` AS `customer`,
             SUM(`tiP2`.`stock_qty`) AS `qty`,
             AVG(`tiP2`.`rate`) AS `rate`,
             MAX(`tP2`.`transaction_date`) AS `last_order`,
@@ -111,8 +102,8 @@ def get_data(filters):
             `tP2`.`docstatus` = 1
             AND `tP2`.`transaction_date` >= "{p2_from}"
             AND `tP2`.`transaction_date` <= "{p2_to}"
-         GROUP BY `key`
-        ) AS `data_P2` ON `data_P2`.`key` = `items`.`key`
+         GROUP BY `tP2`.`customer`
+        ) AS `data_P2` ON `data_P2`.`customer` = `items`.`customer`
       ;
       """.format(
         p1_from=filters['p1_from_date'], 
