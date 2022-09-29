@@ -32,5 +32,13 @@ frappe.query_reports["Trend By Item"] = {
             "default": frappe.datetime.get_today(),
             "reqd": 1
         }
-    ]
+    ],
+    "onload": (report) => {
+        var inner_toolbars = document.getElementsByClassName("form-inner-toolbar");
+        if (inner_toolbars) {
+            for (var i = 0; i < inner_toolbars.length; i++) {
+                inner_toolbars[i].innerHTML = "<div class=\"form-message text-muted small blue\">Absatz auf Stufe Kundenauftrag</div>";
+            }
+        }
+    }
 };
