@@ -42,6 +42,13 @@ def get_data():
                         "doctype": "Sales Order",
                         "is_query_report": True
                    },
+                   {
+                        "type": "report",
+                        "name": "Supplier Orders",
+                        "label": _("Supplier Orders"),
+                        "doctype": "Purchase Order",
+                        "is_query_report": True
+                   },
             ]
         }
     ]
