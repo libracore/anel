@@ -24,6 +24,7 @@ def get_columns():
         {"label": _("Volume P1"), "fieldname": "volume_p1", "fieldtype": "Float", "precision": 2, "width": 80},
         {"label": _("Volume P2"), "fieldname": "volume_p2", "fieldtype": "Float", "precision": 2, "width": 80},
         {"label": _("Volume Diff"), "fieldname": "volume_diff", "fieldtype": "Float", "precision": 2, "width": 80},
+        {"label": _("Volumenänderung"), "fieldname": "volume_change", "fieldtype": "Percent", "width": 100},
         {"label": _("Last order (P1)"), "fieldname": "last_order", "fieldtype": "Date",  "width": 100},
         {"label": _("Days since (P1)"), "fieldname": "days_since", "fieldtype": "Int", "width": 80},
         {"label": "", "fieldname": "blank", "fieldtype": "Data", "width": 20}
@@ -49,6 +50,7 @@ def get_data(filters):
         `data_P1`.`volume` AS `volume_p1`,
         `data_P2`.`volume` AS `volume_p2`,
         `data_P1`.`volume` - `data_P2`.`volume` AS `volume_diff`,
+        (100 * `data_P1`.`volume`) / (`data_P2`.`volume`) AS `volume_change`,
         `data_P1`.`last_order` AS `last_order`,
         DATEDIFF( DATE(NOW()), `data_P1`.`last_order`) AS `days_since`,
         "" AS `:Data:20`
