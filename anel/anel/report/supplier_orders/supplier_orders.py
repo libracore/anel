@@ -57,57 +57,47 @@ def get_data(filters):
     FROM 
     (
         SELECT 
-            `tabItem Supplier`.`supplier` AS `supplier`,
+            `tabPurchase Order`.`supplier` AS `supplier`,
             `tabSupplier`.`default_currency` AS `currency`
         FROM `tabPurchase Order Item`
         LEFT JOIN `tabPurchase Order` ON `tabPurchase Order`.`name` = `tabPurchase Order Item`.`parent`
-        LEFT JOIN `tabItem Supplier` ON (
-            `tabItem Supplier`.`parent` = `tabPurchase Order Item`.`item_code`
-            AND `tabItem Supplier`.`idx` = 1)
         LEFT JOIN `tabSupplier` ON `tabSupplier`.`name` = `tabItem Supplier`.`supplier`
         WHERE 
             `tabPurchase Order`.`docstatus` = 1
             AND `tabPurchase Order`.`transaction_date` >= DATE_SUB(NOW(), INTERVAL 180 DAY)
-            AND `tabItem Supplier`.`supplier` IS NOT NULL
-        GROUP BY `tabItem Supplier`.`supplier`
+        GROUP BY `tabPurchase Order`.`supplier`
     ) AS `items`
     LEFT JOIN 
         (SELECT 
-            `tSI1`.`supplier` AS `supplier`,
+            `tP1`.`supplier` AS `supplier`,
             SUM(`tiP1`.`stock_qty`) AS `qty`,
-            AVG(`tiP1`.`base_rate`) AS `rate`,
+            AVG(`tiP1`.`rate`) AS `rate`,
             MAX(`tP1`.`transaction_date`) AS `last_order`,
-            SUM(`tiP1`.`base_amount`) AS `volume`,
+            SUM(`tiP1`.`amount`) AS `volume`,
             `tiP1`.`stock_uom` AS `stock_uom`
          FROM `tabPurchase Order Item` AS `tiP1`
          LEFT JOIN `tabPurchase Order` AS `tP1` ON `tP1`.`name` = `tiP1`.`parent`
-         LEFT JOIN `tabItem Supplier` AS `tSI1` ON (
-            `tSI1`.`parent` = `tiP1`.`item_code`
-            AND `tSI1`.`idx` = 1)
          WHERE 
             `tP1`.`docstatus` = 1
             AND `tP1`.`transaction_date` >= "{p1_from}"
             AND `tP1`.`transaction_date` <= "{p1_to}"
-         GROUP BY `tSI1`.`supplier`
+         GROUP BY `tP1`.`supplier`
         ) AS `data_P1` ON `data_P1`.`supplier` = `items`.`supplier`
     LEFT JOIN 
         (SELECT 
-            `tSI2`.`supplier` AS `supplier`,
+            `tP2`.`supplier` AS `supplier`,
             SUM(`tiP2`.`stock_qty`) AS `qty`,
-            AVG(`tiP2`.`base_rate`) AS `rate`,
+            AVG(`tiP2`.`rate`) AS `rate`,
             MAX(`tP2`.`transaction_date`) AS `last_order`,
-            SUM(`tiP2`.`base_amount`) AS `volume`,
+            SUM(`tiP2`.`amount`) AS `volume`,
             `tiP2`.`stock_uom` AS `stock_uom`
          FROM `tabPurchase Order Item` AS `tiP2`
          LEFT JOIN `tabPurchase Order` AS `tP2` ON `tP2`.`name` = `tiP2`.`parent`
-         LEFT JOIN `tabItem Supplier` AS `tSI2` ON (
-            `tSI2`.`parent` = `tiP2`.`item_code`
-            AND `tSI2`.`idx` = 1)
          WHERE 
             `tP2`.`docstatus` = 1
             AND `tP2`.`transaction_date` >= "{p2_from}"
             AND `tP2`.`transaction_date` <= "{p2_to}"
-         GROUP BY `tSI2`.`supplier`
+         GROUP BY `tP2`.`supplier`
         ) AS `data_P2` ON `data_P2`.`supplier` = `items`.`supplier`
       ;
       """.format(
