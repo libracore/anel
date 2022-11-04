@@ -61,7 +61,7 @@ def get_data(filters):
             `tabSupplier`.`default_currency` AS `currency`
         FROM `tabPurchase Order Item`
         LEFT JOIN `tabPurchase Order` ON `tabPurchase Order`.`name` = `tabPurchase Order Item`.`parent`
-        LEFT JOIN `tabSupplier` ON `tabSupplier`.`name` = `tabItem Supplier`.`supplier`
+        LEFT JOIN `tabSupplier` ON `tabSupplier`.`name` = `tabPurchase Order`.`supplier`
         WHERE 
             `tabPurchase Order`.`docstatus` = 1
             AND `tabPurchase Order`.`transaction_date` >= DATE_SUB(NOW(), INTERVAL 180 DAY)
