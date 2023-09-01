@@ -63,7 +63,7 @@ def get_data(filters):
             AND `tabItem Supplier`.`idx` = 1)
         WHERE 
             `tabSales Order`.`docstatus` = 1
-            AND `tabSales Order`.`transaction_date` >= DATE_SUB(NOW(), INTERVAL 180 DAY)
+            AND `tabSales Order`.`transaction_date` >= DATE_SUB(NOW(), INTERVAL 7300 DAY)
             AND `tabItem Supplier`.`supplier` IS NOT NULL
         GROUP BY `tabItem Supplier`.`supplier`
     ) AS `items`

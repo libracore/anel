@@ -66,7 +66,7 @@ def get_data(filters):
         LEFT JOIN `tabSales Order` ON `tabSales Order`.`name` = `tabSales Order Item`.`parent`
         WHERE 
             `tabSales Order`.`docstatus` = 1
-            AND `tabSales Order`.`transaction_date` >= DATE_SUB(NOW(), INTERVAL 180 DAY)
+            AND `tabSales Order`.`transaction_date` >= DATE_SUB(NOW(), INTERVAL 7300 DAY)
         GROUP BY `tabSales Order`.`customer`
     ) AS `items`
     LEFT JOIN `tabCustomer` ON `tabCustomer`.`name` = `items`.`customer`
