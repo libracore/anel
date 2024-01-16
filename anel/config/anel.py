@@ -44,6 +44,13 @@ def get_data():
                    },
                    {
                         "type": "report",
+                        "name": "Trend By Territory and Supplier",
+                        "label": _("Trend By Territory and Supplier"),
+                        "doctype": "Sales Invoice",
+                        "is_query_report": True
+                   },
+                   {
+                        "type": "report",
                         "name": "Supplier Orders",
                         "label": _("Supplier Orders"),
                         "doctype": "Purchase Order",
