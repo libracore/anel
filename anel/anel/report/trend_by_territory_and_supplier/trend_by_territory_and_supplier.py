@@ -69,7 +69,7 @@ def get_data(filters):
             `tabSales Invoice`.`docstatus` = 1
             AND `tabSales Invoice`.`posting_date` >= DATE_SUB(NOW(), INTERVAL 7300 DAY)
             AND `tabItem Supplier`.`supplier` IS NOT NULL
-        GROUP BY `tabItem Supplier`.`supplier`
+        GROUP BY `key`
     ) AS `items`
     LEFT JOIN 
         (SELECT 
