@@ -90,7 +90,7 @@ def get_data(filters):
             `tP1`.`docstatus` = 1
             AND `tP1`.`posting_date` >= "{p1_from}"
             AND `tP1`.`posting_date` <= "{p1_to}"
-         GROUP BY `tSI1`.`supplier`
+         GROUP BY `key`
         ) AS `data_P1` ON `data_P1`.`key` = `items`.`key`
     LEFT JOIN 
         (SELECT 
@@ -111,7 +111,7 @@ def get_data(filters):
             `tP2`.`docstatus` = 1
             AND `tP2`.`posting_date` >= "{p2_from}"
             AND `tP2`.`posting_date` <= "{p2_to}"
-         GROUP BY `tSI2`.`supplier`
+         GROUP BY `key`
         ) AS `data_P2` ON `data_P2`.`key` = `items`.`key`
       ;
       """.format(
