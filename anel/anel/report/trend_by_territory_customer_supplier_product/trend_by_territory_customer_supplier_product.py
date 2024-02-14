@@ -14,6 +14,7 @@ def get_columns():
     return [
         {"label": _("Territory"), "fieldname": "territory", "fieldtype": "Link", "options": "Territory", "width": 150},
         {"label": _("Customer"), "fieldname": "customer", "fieldtype": "Link", "options": "Customer", "width": 150},
+        {"label": _("Customer name"), "fieldname": "customer_name", "fieldtype": "Link", "options": "Customer", "width": 150},
         {"label": _("Supplier"), "fieldname": "supplier", "fieldtype": "Link", "options": "Supplier", "width": 150},
         {"label": _("Item"), "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
         {"label": _("UOM"), "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 50},
@@ -43,6 +44,7 @@ def get_data(filters):
         `items`.`supplier` AS `supplier`,
         `items`.`territory` AS `territory`,
         `items`.`customer` AS `customer`,
+        `items`.`customer_name` AS `customer_name`,
         `items`.`item_code` AS `item_code`,
         `data_P2`.`stock_uom` AS `uom`,
         IFNULL(`data_P1`.`qty`, 0) AS `qty_p1`,
@@ -66,6 +68,7 @@ def get_data(filters):
             `tabItem Supplier`.`supplier` AS `supplier`,
             `tabSales Invoice`.`territory` AS `territory`,
             `tabSales Invoice`.`customer` AS `customer`,
+            `tabSales Invoice`.`customer_name` AS `customer_name`,
             `tabSales Invoice Item`.`item_code` AS `item_code`,
             CONCAT(`tabSales Invoice`.`territory`, "::", 
                 `tabSales Invoice`.`customer`, "::",
