@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
+from frappe.utils import cint, flt
 
 def execute(filters=None):
     columns = get_columns()
@@ -21,6 +22,8 @@ def get_columns():
         {"label": _("UOM"), "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 50},
         {"label": _("Menge P1"), "fieldname": "qty_p1", "fieldtype": "Float", "width": 100},
         {"label": _("Menge P2"), "fieldname": "qty_p2", "fieldtype": "Float", "width": 100},
+        {"label": _("P1 - P2"), "fieldname": "p1_minus_p2", "fieldtype": "Float", "width": 100},
+        {"label": _("P1 - P2 (%)"), "fieldname": "p1_minus_p2_percent", "fieldtype": "Percent", "width": 100},
         {"label": _("P1 pro Mt"), "fieldname": "qty_p1_mt", "fieldtype": "Float", "width": 100},
         {"label": _("P2 pro Mt"), "fieldname": "qty_p2_mt", "fieldtype": "Float", "width": 100},
         {"label": _("Änderung"), "fieldname": "change", "fieldtype": "Percent", "width": 100},
@@ -28,7 +31,8 @@ def get_columns():
         {"label": _("Currency"), "fieldname": "currency", "fieldtype": "Link", "options": "Currency", "width": 80},
         {"label": _("Volume P1"), "fieldname": "volume_p1", "fieldtype": "Float", "precision": 2, "width": 80},
         {"label": _("Volume P2"), "fieldname": "volume_p2", "fieldtype": "Float", "precision": 2, "width": 80},
-        {"label": _("Volume Diff"), "fieldname": "volume_diff", "fieldtype": "Float", "precision": 2, "width": 80},
+        {"label": _("Volume P1 - P2"), "fieldname": "volume_diff", "fieldtype": "Float", "precision": 2, "width": 80},
+        {"label": _("Volume P1 - P2 (%)"), "fieldname": "volume_diff_percent", "fieldtype": "Percent", "precision": 2, "width": 80},
         {"label": _("Last order (P1)"), "fieldname": "last_order", "fieldtype": "Date",  "width": 100},
         {"label": _("Days since (P1)"), "fieldname": "days_since", "fieldtype": "Int", "width": 80},
         {"label": "", "fieldname": "blank", "fieldtype": "Data", "width": 20}
@@ -60,7 +64,6 @@ def get_data(filters):
         "CHF" AS `currency`,
         IFNULL(`data_P1`.`volume`, 0) AS `volume_p1`,
         IFNULL(`data_P2`.`volume`, 0) AS `volume_p2`,
-        IFNULL(`data_P1`.`volume`, 0) - IFNULL(`data_P2`.`volume`, 0) AS `volume_diff`,
         `data_P1`.`last_order` AS `last_order`,
         DATEDIFF( DATE(NOW()), `data_P1`.`last_order`) AS `days_since`,
         "" AS `:Data:20`
@@ -150,4 +153,12 @@ def get_data(filters):
     
     data = frappe.db.sql(sql_query, as_dict=1)
 
+    for d in data:
+        d['p1_minus_p2'] = flt(d.get('qty_p1')) - flt(d.get('qty_p2'))
+        if d.get('qty_p1'):
+            d['p1_minus_p2_percent'] = 100 * d['p1_minus_p2'] / d['qty_p1']
+        d['volume_diff'] = flt(d.get('volume_p1')) - flt(d.get('volume_p2'))
+        if d.get('volume_p1'):
+            d['volume_diff_percent'] = 100 * d['volume_diff'] / d['volume_p1']
+            
     return data
