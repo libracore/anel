@@ -81,13 +81,14 @@ doctype_list_js = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
+doc_events = {
+	"Sales Invoice": {
+        "before_save": "anel.anel.utils.sales_invoice_before_save"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
-#	}
-# }
+    }
+}
 
 # Scheduled Tasks
 # ---------------

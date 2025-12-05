@@ -4,3 +4,4 @@
 *.swp
 tags
 anel/docs/current
+__pycache__
